@@ -5,5 +5,5 @@
  * @param {!express:Response} res HTTP response context.
  */
 exports.helloMars = (req, res) => {
-    res.send('Hello, Mars!');
+    res.send('Hello, from Curiosity!');
 };
