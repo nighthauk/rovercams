@@ -1,0 +1,11 @@
+{
+  "name": "rovercams",
+  "version": "1.0.0",
+  "description": "Simple bot that pulls a few random images every day from the Mars Rover API and posts them to twitter. Eventually may add Tensorflow to better identify and discard poor images that seem to make their way in to the data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryan Hauk",
+  "license": "ISC"
+}
