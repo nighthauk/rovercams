@@ -4,8 +4,19 @@
   "description": "Simple bot that pulls a few random images every day from the Mars Rover API and posts them to twitter. Eventually may add Tensorflow to better identify and discard poor images that seem to make their way in to the data.",
   "main": "index.js",
   "scripts": {
+    "start": "functions-framework --target=helloMars --function-signature-type=http",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ryan Hauk",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^1.7.1",
+    "@google-cloud/secret-manager": "^3.2.0",
+    "axios": "^0.21.0",
+    "lodash": "^4.17.20",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {
+    "eslint": "^7.12.0"
+  }
 }
