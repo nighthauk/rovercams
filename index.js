@@ -95,45 +95,52 @@ exports.helloMars = async (req, res) => {
 
     // Get our data from NASA and pick our photos
     let roverPayload = await Axios.get(`${nasaEndpoint}?${queryMap}`);
+    let photosArray = roverPayload.data.photos;
 
     // Todo: Change this to paginated call and filter out some of the crappy photos
     // let reducedCams = _.reject(roverPayload.data.photos, { camera: { name: 'CHEMCAM' }});
     // let roverPhotos = _.sampleSize(reducedCams, 4);
 
-    let photosArray = roverPayload.data.photos;
-    let roverPhotos =  photosArray.length > 4 ? _.sampleSize(photosArray, 4) : photosArray;
-    let { sol, earth_date } = roverPhotos[0];
-    let mediaPayload = [];
-    let mediaIds = [];
+    // Apparently not all cameras take pictures every day..
+    if (photosArray === undefined || photosArray.length == 0) {
+        res.set('Content-Type', 'application/json')
+            .status(200)
+            .send(photosArray);
+    } else {
+        let roverPhotos = photosArray.length > 4 ? _.sampleSize(photosArray, 4) : photosArray;
+        let { sol, earth_date } = roverPhotos[0] || {};
+        let mediaPayload = [];
+        let mediaIds = [];
 
-    for (let record of roverPhotos) {
-        // Grab each photo and convert to base64
-        let image = await Axios.get(record.img_src, { responseType: 'arraybuffer' });
-        let b64Image = Buffer.from(image.data).toString('base64');
+        for (let record of roverPhotos) {
+            // Grab each photo and convert to base64
+            let image = await Axios.get(record.img_src, { responseType: 'arraybuffer' });
+            let b64Image = Buffer.from(image.data).toString('base64');
 
-        // Push to array for multiple media tweet
-        mediaPayload.push(b64Image);
+            // Push to array for multiple media tweet
+            mediaPayload.push(b64Image);
+        }
+
+        // Itterate over the b64 image array and exchange them for media Id's for the tweet
+        for (let media of mediaPayload) {
+            await getTwtrMediaId(twtrClient, media)
+                .then(
+                    (response) => {
+                        mediaIds.push(response);
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                )
+        }
+
+        // // Send our final tweet!
+        const twtrRes = await twtrClient.post('statuses/update', { status: `Sol: ${sol} | Earth Date: ${earth_date}`, media_ids: mediaIds });
+
+        res.set('Content-Type', 'application/json')
+            .status(200)
+            .send(twtrRes);
     }
-
-    // Itterate over the b64 image array and exchange them for media Id's for the tweet
-    for (let media of mediaPayload) {
-        await getTwtrMediaId(twtrClient, media)
-            .then(
-                (response) => {
-                    mediaIds.push(response);
-                }
-            )
-            .catch(
-                (error) => {
-                    console.log(error);
-                }
-            )
-    }
-
-    // // Send our final tweet!
-    const twtrRes = await twtrClient.post('statuses/update', { status: `Sol: ${sol} | Earth Date: ${earth_date}`, media_ids: mediaIds });
-
-    res.set('Content-Type', 'application/json')
-        .status(200)
-        .send(twtrRes);
 };
