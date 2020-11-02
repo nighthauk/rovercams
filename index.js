@@ -88,7 +88,7 @@ exports.helloMars = async (req, res) => {
     // Define our query parameters and stringify them
     let queryMap = qs.stringify({
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
-        , earth_date: '2020-10-31' //convertUTCDateToLocalDate(new Date())
+        , earth_date: convertUTCDateToLocalDate(new Date())
         , camera: 'NAVCAM' // next revision will cycle random cameras
         , page: 1
     });
@@ -137,7 +137,10 @@ exports.helloMars = async (req, res) => {
         }
 
         // // Send our final tweet!
-        const twtrRes = await twtrClient.post('statuses/update', { status: `Sol: ${sol} | Earth Date: ${earth_date}`, media_ids: mediaIds });
+        const twtrRes = await twtrClient.post('statuses/update', { 
+            status: `Sol: ${sol} | Earth Date: ${earth_date} \r\n @MarsCuriosity @NASA \r\n #curiosity #rover #nasa #mars`
+            , media_ids: mediaIds
+        });
 
         res.set('Content-Type', 'application/json')
             .status(200)
