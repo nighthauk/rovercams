@@ -68,13 +68,13 @@ exports.helloMars = async (req, res) => {
     let parsedBody;
 
     // Solves some issue with cloud scheduler execution as a post
-    // if (req.header('content-type') === 'application/json') {
-    //     console.log('request header content-type is application/json and auto parsing the req body as json');
-    //     parsedBody = req.body;
-    // } else {
-    //     console.log('request header content-type is NOT application/json and MANUALLY parsing the req body as json');
-    //     parsedBody = JSON.parse(req.body);
-    // }
+    if (req.header('content-type') === 'application/json') {
+        console.log('request header content-type is application/json and auto parsing the req body as json');
+        parsedBody = req.body;
+    } else {
+        console.log('request header content-type is NOT application/json and MANUALLY parsing the req body as json');
+        parsedBody = JSON.parse(req.body);
+    }
 
     // Initialize Secret Manager and Twitter client
     const secretClient = new SecretManagerServiceClient();
@@ -88,7 +88,7 @@ exports.helloMars = async (req, res) => {
     // Define our query parameters and stringify them
     let queryMap = qs.stringify({
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
-        , earth_date: convertUTCDateToLocalDate(new Date())
+        , earth_date: '2020-10-31' //convertUTCDateToLocalDate(new Date())
         , camera: 'NAVCAM' // next revision will cycle random cameras
         , page: 1
     });
