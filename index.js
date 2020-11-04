@@ -53,7 +53,7 @@ const getTwtrMediaId = async (client, image) => {
  */
 function convertUTCDateToLocalDate(date) {
     // Use yesterday, seems to be somewhat of a delay for all photos to get back to earth
-    date.setDate(date.getDate() - 1);
+    date.setDate(date.getDate() - 2);
     let newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
 
     return newDate.toISOString().slice(0, 10);
