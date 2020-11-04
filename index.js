@@ -52,7 +52,9 @@ const getTwtrMediaId = async (client, image) => {
  * @param {Date} date new date object to format. Nasa makes these available after UTC has advanced days.
  */
 function convertUTCDateToLocalDate(date) {
-    var newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+    // Use yesterday, seems to be somewhat of a delay for all photos to get back to earth
+    date.setDate(date.getDate() - 1);
+    let newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
 
     return newDate.toISOString().slice(0, 10);
 }
@@ -92,6 +94,8 @@ exports.helloMars = async (req, res) => {
         , camera: 'NAVCAM' // next revision will cycle random cameras
         , page: 1
     });
+
+    console.log(queryMap);
 
     // Get our data from NASA and pick our photos
     let roverPayload = await Axios.get(`${nasaEndpoint}?${queryMap}`);
