@@ -91,11 +91,9 @@ exports.helloMars = async (req, res) => {
     let queryMap = qs.stringify({
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
         , earth_date: convertUTCDateToLocalDate(new Date())
-        , camera: 'NAVCAM' // next revision will cycle random cameras
+        // , camera: 'NAVCAM'
         , page: 1
     });
-
-    console.log(queryMap);
 
     // Get our data from NASA and pick our photos
     let roverPayload = await Axios.get(`${nasaEndpoint}?${queryMap}`);
