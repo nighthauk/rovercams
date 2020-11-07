@@ -91,7 +91,7 @@ exports.helloMars = async (req, res) => {
     let queryMap = qs.stringify({
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
         , earth_date: convertUTCDateToLocalDate(new Date())
-        // , camera: 'NAVCAM'
+        , camera: 'NAVCAM'
         , page: 1
     });
 
