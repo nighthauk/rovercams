@@ -14,11 +14,11 @@ const Twitter = require('twit');
 const Axios = require('axios');
 
 // Static Credentials
-const nasaApiKey = 'projects/204450438537/secrets/NASAROV_API_KEY';
-const twtrAccessToken = 'projects/204450438537/secrets/TWTR_ACCESS_TOKEN';
-const twtrAccessTokenSecret = 'projects/204450438537/secrets/TWTR_ACCESS_TOKEN_SECRET';
-const twtrApiKey = 'projects/204450438537/secrets/TWTR_API_KEY';
-const twtrApiKeySecret = 'projects/204450438537/secrets/TWTR_API_KEY_SECRET';
+const nasaApiKey = process.env.NASAROV_API_KEY_LOC;
+const twtrAccessToken = process.env.TWTR_ACCESS_TOKEN_LOC;
+const twtrAccessTokenSecret = process.env.TWTR_ACCESS_TOKEN_SECRET_LOC;
+const twtrApiKey = process.env.TWTR_API_KEY_LOC;
+const twtrApiKeySecret = process.env.TWTR_API_KEY_SECRET_LOC;
 
 // Static endpoints and parameters
 const nasaEndpoint = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos';
