@@ -28,6 +28,7 @@ const nasaEndpoint = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/p
  * @param {String} name 
  */
 const getFromSecretManager = async (client, name) => {
+    console.log(`Secret: ${name}`);
     const [version] = await client.accessSecretVersion({
         name: `${name}/versions/latest`,
     });
