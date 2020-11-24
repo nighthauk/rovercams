@@ -4,7 +4,6 @@
  * the curiosity mars rover every day and post them to twitter.
  * @author Ryan Hauk <ryan@nighthauk.com>
  */
-
 'use strict';
 
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
