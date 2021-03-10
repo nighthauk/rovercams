@@ -19,9 +19,6 @@ const twtrAccessTokenSecret = process.env.TWTR_ACCESS_TOKEN_SECRET_LOC;
 const twtrApiKey = process.env.TWTR_API_KEY_LOC;
 const twtrApiKeySecret = process.env.TWTR_API_KEY_SECRET_LOC;
 
-// Static endpoints and parameters
-const nasaEndpoint = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos';
-
 /**
  * 
  * @param {Client} client 
@@ -86,17 +83,23 @@ exports.helloMars = async (req, res) => {
         , access_token_secret: await getFromSecretManager(secretClient, twtrAccessTokenSecret)
     });
 
+    console.log(twtrClient);
+
     // Define our query parameters and stringify them
     let queryMap = qs.stringify({
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
         , earth_date: convertUTCDateToLocalDate(new Date())
-        , camera: 'NAVCAM'
+        , ...(parsedBody.camera && { camera: parsedBody.camera })
         , page: 1
     });
 
     // Get our data from NASA and pick our photos
+    let nasaEndpoint = `https://api.nasa.gov/mars-photos/api/v1/rovers/${parsedBody.rover}/photos`;
     let roverPayload = await Axios.get(`${nasaEndpoint}?${queryMap}`);
     let photosArray = roverPayload.data.photos;
+
+    console.log(queryMap);
+    console.log(roverPayload);
 
     // Todo: Change this to paginated call and filter out some of the crappy photos
     // let reducedCams = _.reject(roverPayload.data.photos, { camera: { name: 'CHEMCAM' }});
@@ -110,9 +113,10 @@ exports.helloMars = async (req, res) => {
     } else {
         let roverPhotos = photosArray.length > 4 ? _.sampleSize(photosArray, 4) : photosArray;
         let { sol, earth_date } = roverPhotos[0] || {};
+        let { rover, twit_handle } = parsedBody || {};
         let mediaPayload = [];
         let mediaIds = [];
-
+        
         for (let record of roverPhotos) {
             // Grab each photo and convert to base64
             let image = await Axios.get(record.img_src, { responseType: 'arraybuffer' });
@@ -138,8 +142,8 @@ exports.helloMars = async (req, res) => {
         }
 
         // // Send our final tweet!
-        const twtrRes = await twtrClient.post('statuses/update', { 
-            status: `Sol: ${sol} | Earth Date: ${earth_date} \r\n @MarsCuriosity @NASA \r\n #curiosity #rover #nasa #mars`
+        const twtrRes = await twtrClient.post('statuses/update', {
+            status: `Sol: ${sol} | Earth Date: ${earth_date} \r\n ${twit_handle} @NASA \r\n #${rover} #rover #nasa #mars`
             , media_ids: mediaIds
         });
 
