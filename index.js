@@ -90,6 +90,7 @@ exports.helloMars = async (req, res) => {
         api_key: await getFromSecretManager(secretClient, nasaApiKey)
         , earth_date: convertUTCDateToLocalDate(new Date())
         , ...(parsedBody.camera && { camera: parsedBody.camera })
+        , per_page: 250
         , page: 1
     });
 
@@ -97,9 +98,6 @@ exports.helloMars = async (req, res) => {
     let nasaEndpoint = `https://api.nasa.gov/mars-photos/api/v1/rovers/${parsedBody.rover}/photos`;
     let roverPayload = await Axios.get(`${nasaEndpoint}?${queryMap}`);
     let photosArray = roverPayload.data.photos;
-
-    console.log(queryMap);
-    console.log(roverPayload);
 
     // Todo: Change this to paginated call and filter out some of the crappy photos
     // let reducedCams = _.reject(roverPayload.data.photos, { camera: { name: 'CHEMCAM' }});
